@@ -5,4 +5,4 @@ MyNuma is an easy alternative to the otherwise difficult-to-traverse [my.uafs.ed
 
 If you have any questions about the project or myself, you can always email me at christianrawley0@gmail.com (personal) or crawle00@uafs.edu (university).
 
-![Screenshot](https://media.discordapp.net/attachments/1121270722841559040/1326350469626593361/Screenshot_20250107_184034_MyNuma.jpg?ex=677f1ba2&is=677dca22&hm=7ca802ad2b64a26c5d4d41c8c5f97f9ad45a3f804960bade9d28b4ee1f37c976&=&format=webp&width=360&height=778)
+![Screenshot](https://media.discordapp.net/attachments/1121270722841559040/1370253601146015764/Screenshot_20250107_184034_MyNuma.png?ex=681f7c5c&is=681e2adc&hm=cae4a1446b559b705a1fe87d1484df2b66c8db157ad32856707f0fd6aed2d8e5&=&format=webp&quality=lossless&width=507&height=1098)
