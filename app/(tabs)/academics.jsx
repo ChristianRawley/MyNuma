@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, FlatList, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, FlatList, TextInput, ScrollView, Alert } from 'react-native';
 
-async function makeGetRequest(url: string): Promise<string> {
+async function makeGetRequest(url) {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -9,34 +9,9 @@ async function makeGetRequest(url: string): Promise<string> {
   return await response.text();
 }
 
-interface Term {
-  id: string;
-  name: string;
-}
-
-interface Subject {
-  id: string;
-  name: string;
-}
-
-interface ModalProps {
-  visible: boolean;
-  title: string;
-  data: Term[];
-  onSelect: (id: string, name: string) => void;
-  onClose: () => void;
-}
-
-interface ButtonProps {
-  title: string;
-  data: Term[];
-  onSelect: (id: string, name: string) => void;
-}
-
-const CustomModal: React.FC<ModalProps> = ({ visible, title, data, onSelect, onClose }) => {
+const CustomModal = ({ visible, title, data, onSelect, onClose }) => {
   const [searchText, setSearchText] = useState('');
   const filteredData = data.filter((item) => item.name.toLowerCase().includes(searchText.toLowerCase()));
-
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
@@ -62,9 +37,8 @@ const CustomModal: React.FC<ModalProps> = ({ visible, title, data, onSelect, onC
   );
 };
 
-const SectionButton: React.FC<ButtonProps> = ({ title, data, onSelect }) => {
+const SectionButton = ({ title, data, onSelect }) => {
   const [modalVisible, setModalVisible] = useState(false);
-
   return (
     <>
       <TouchableOpacity style={styles.searchButton} onPress={() => setModalVisible(true)}>
@@ -82,17 +56,17 @@ const SectionButton: React.FC<ButtonProps> = ({ title, data, onSelect }) => {
 };
 
 export default function Tab() {
-  const [terms, setTerms] = useState<Term[]>([]); 
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
-  const [selectedTermName, setSelectedTermName] = useState<string>('');
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
-  const [selectedSubjectName, setSelectedSubjectName] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-  const [selectedStatusName, setSelectedStatusName] = useState<string>('');
-  const [selectedSection, setSelectedSection] = useState<string | null>(null);
-  const [selectedSectionName, setSelectedSectionName] = useState<string>('');
-  const [courses, setCourses] = useState<any[]>([]);
+  const [terms, setTerms] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [selectedTerm, setSelectedTerm] = useState(null);
+  const [selectedTermName, setSelectedTermName] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedSubjectName, setSelectedSubjectName] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [selectedStatusName, setSelectedStatusName] = useState('');
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [selectedSectionName, setSelectedSectionName] = useState('');
+  const [courses, setCourses] = useState([]);
 
   const statuses = [
     { id: '%', name: 'Any Status' },
@@ -126,8 +100,8 @@ export default function Tab() {
         const termResponse = await makeGetRequest('https://mynumaserver-production.up.railway.app/getTerms');
         const subjectResponse = await makeGetRequest('https://mynumaserver-production.up.railway.app/getSubjects');
         
-        const parsedTerms = JSON.parse(termResponse) as Term[];
-        const parsedSubjects = JSON.parse(subjectResponse) as Subject[];
+        const parsedTerms = JSON.parse(termResponse);
+        const parsedSubjects = JSON.parse(subjectResponse);
 
         setTerms(parsedTerms);
         setSubjects(parsedSubjects);
@@ -186,31 +160,32 @@ export default function Tab() {
       </View>
 
       <FlatList
-      style={{ width: '100%' }}
-      data={courses}
-      scrollEnabled={false}
-      keyExtractor={(item) => item.crn}
-      renderItem={({ item }) => (
-      <View style={styles.courseItem}>
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-          <View style={{backgroundColor: '#ddd', borderWidth: 1, borderColor: '#bbb', borderRadius: 4, paddingHorizontal: 4, justifyContent: 'center', alignItems: 'center', alignSelf: 'center'}}>
-            <Text style={{fontSize: 12}}>{item.subject} {item.crsNum}</Text>
+        style={{ width: '100%' }}
+        data={courses}
+        scrollEnabled={false}
+        keyExtractor={(item) => item.crn}
+        renderItem={({ item }) => (
+          <View style={styles.courseItem}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+              <View style={{backgroundColor: '#ddd', borderWidth: 1, borderColor: '#bbb', borderRadius: 4, paddingHorizontal: 4, justifyContent: 'center', alignItems: 'center', alignSelf: 'center'}}>
+                <Text style={{fontSize: 12}}>{item.subject} {item.crsNum}</Text>
+              </View>
+              <Text style={styles.courseTitle}> {item.title}</Text>
+            </View>
+            <Text style={styles.courseInfo}>
+              <Text style={styles.courseLabel}>Status:</Text> {item.status} | <Text style={styles.courseLabel}></Text>{item.act}/{item.cap} seats taken
+            </Text>
+            <Text style={styles.courseInfo}><Text style={styles.courseLabel}>Meeting Time:</Text> {item.meetingTime} </Text>
+            <Text style={styles.courseInfo}>
+              <Text style={styles.courseLabel}>Location:</Text> {item.location}
+            </Text>
+            <Text style={styles.courseInfo}>
+              <Text style={styles.courseLabel}>Instructor:</Text> {item.instructor}
+            </Text>
           </View>
-          <Text style={styles.courseTitle}> {item.title}</Text>
-        </View>
-        <Text style={styles.courseInfo}>
-        <Text style={styles.courseLabel}>Status:</Text> {item.status} | <Text style={styles.courseLabel}></Text>{item.act}/{item.cap} seats taken</Text>
-        <Text style={styles.courseInfo}><Text style={styles.courseLabel}>Meeting Time:</Text> {item.meetingTime} </Text>
-        <Text style={styles.courseInfo}>
-        <Text style={styles.courseLabel}>Location:</Text> {item.location}
-        </Text>
-        <Text style={styles.courseInfo}>
-        <Text style={styles.courseLabel}>Instructor:</Text> {item.instructor}
-        </Text>
-      </View>
-      )}
-      ListEmptyComponent={<Text style={styles.emptyText}>No results found.</Text>}/>
-
+        )}
+        ListEmptyComponent={<Text style={styles.emptyText}>No results found.</Text>}
+      />
     </ScrollView>
   );
 }
@@ -312,7 +287,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  // Styles for course display
   courseItem: {
     width: '100%',
     padding: 12,
